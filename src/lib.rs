@@ -1,7 +1,8 @@
 #[macro_use]
+extern crate diesel;
 
-mod models;
-mod schema;
+pub mod models;
+pub mod schema;
 
 pub mod data_form;
 pub mod items;
@@ -13,7 +14,6 @@ pub use items::Items;
 pub use operation::Operation;
 pub use setting::Setting;
 
-use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -33,11 +33,21 @@ mod tests {
         use crate::Data;
         let input = r#"
         {
-            "command": "insert",
+            "command": "delete",
             "items": [
                 {
                     "tags": {},
                     "data": {},
+                    "entity": "price",
+                    "time": "2020-11-11 00:00:00"
+                },
+                {
+                    "tags": {},
+                    "data": 
+                    {
+                        "name": "World",
+                        "cost": 3000000000
+                    },
                     "entity": "price",
                     "time": "2020-11-11 00:00:00"
                 }
