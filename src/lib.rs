@@ -36,6 +36,7 @@ pub fn establish_connection() -> PgConnection {
 mod tests {
     #[test]
     fn parse_json_to_data() {
+        pretty_env_logger::init();
         use crate::Data;
         let input = r#"
         {
@@ -64,6 +65,6 @@ mod tests {
         }
         "#;
         let data: Data = serde_json::from_str(input).unwrap();
-        println!("{:#?}", data);
+        log::trace!("{:?}", data);
     }
 }

@@ -1,11 +1,11 @@
 use crate::schema::main_table;
-
 use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 use diesel::{Insertable, Queryable};
+use log::trace;
 use serde_json::value::Value;
 
-#[derive(Queryable, Identifiable, Associations)]
+#[derive(Debug, Queryable, Identifiable, Associations)]
 #[table_name = "main_table"]
 #[primary_key(insert_time)]
 pub struct MainTable {
@@ -36,14 +36,15 @@ impl MainTable {
         conn: &PgConnection,
         start: DateTime<Utc>,
         end: DateTime<Utc>,
-    ) -> anyhow::Result<()> {
-        let a = main_table::table
+    ) -> anyhow::Result<usize> {
+        trace!("Get Timeranged Data : ");
+        let r = main_table::table
             .select(ALL_COLUMNS)
             .filter(main_table::insert_time.between(start, end)) // ByInterval Type Constructed Here
             .execute(conn)?;
-        log::debug!("Get Timeranged Data");
-        println!("Get Timeranged  {:?}", a);
-        Ok(())
+        // Need to Figure out Why Get Results Does not Work
+        trace!("Get Timeranged Data : {:?}", r);
+        Ok(r)
     }
 }
 

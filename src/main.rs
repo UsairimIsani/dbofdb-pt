@@ -1,6 +1,6 @@
 use dbofdb::{self, prelude::MainTable};
+use log::trace;
 use serde_json::json;
-use log::{trace}
 use warp::Filter;
 #[tokio::main]
 pub async fn main() {
@@ -17,14 +17,14 @@ pub async fn main() {
     // Only Testing
     let schema_from_json_value = jsonschema::JSONSchema::compile(&value).unwrap();
 
-    println!("{:#?}", schema_from_json_value);
-    println!("{:#?}", schema_from_json_value.is_valid(&value));
+    trace!("{:#?}", schema_from_json_value);
+    trace!("{:#?}", schema_from_json_value.is_valid(&value));
 
     // Get the Schema for the Data. Yet to get the Schema from the json Object.
     // Only Testing
     let schema = schemars::schema_for!(dbofdb::Data);
-    
-    trace!(&serde_json::to_string_pretty(&schema).unwrap());
+
+    trace!("{}", &serde_json::to_string_pretty(&schema).unwrap());
 
     MainTable::query_by_interval(&conn, chrono::Utc::now(), chrono::Utc::now());
 
