@@ -1,14 +1,16 @@
 #[macro_use]
 extern crate diesel;
 
-pub mod models;
-pub mod schema;
+mod controllers;
+mod models;
+mod routes;
+mod schema;
+
+mod items;
+mod operation;
+mod setting;
 
 pub mod data_form;
-pub mod items;
-pub mod operation;
-pub mod setting;
-
 pub use data_form::Data;
 pub use items::Items;
 pub use operation::Operation;
@@ -18,8 +20,12 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
-
+pub mod prelude {
+    pub use super::*;
+    // pub use Data;
+}
 pub fn establish_connection() -> PgConnection {
+    log::info!("Establlishing Connection to Timescale DB");
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");

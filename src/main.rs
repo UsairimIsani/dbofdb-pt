@@ -1,21 +1,35 @@
 use dbofdb;
-use dbofdb::models::*;
-use dbofdb::schema::main_table;
+use serde_json::json;
 
-use diesel::prelude::*;
-use serde_json::{json, Value};
-
-fn main() {
+use warp::Filter;
+#[tokio::main]
+pub async fn main() {
+    pretty_env_logger::init();
     let conn = dbofdb::establish_connection();
-    let default_data = InsertIntoMainTable::default();
-    let some_data = InsertIntoMainTable::new(json!(6), Value::Bool(false), String::from("price"));
-    let more_data = InsertIntoMainTable::new(
-        json!(6),
-        json!({"hello":"world","welcome":"dbofdb"}),
-        String::from("price"),
-    );
-    let r: Vec<MainTable> = diesel::insert_into(main_table::table)
-        .values(&vec![default_data, some_data, more_data])
-        .get_results(&conn)
-        .expect("Failed to add anything");
+    let value = json!({
+    "name": "World",
+    "cost": 3000,
+    "val":0,
+    "time":"2020-11-11 00:00:00"
+    });
+
+    // Generating Schema on the Fly from Jsonb Data
+    // Only Testing
+    let schema_from_json_value = jsonschema::JSONSchema::compile(&value).unwrap();
+
+    println!("{:#?}", schema_from_json_value);
+
+    // Get the Schema for the Data. Yet to get the Schema from the json Object.
+    // Only Testing
+    let schema = schemars::schema_for!(dbofdb::Data);
+    println!("{}", serde_json::to_string_pretty(&schema).unwrap());
+
+    // Small rest Api to test.
+    let insert_data = warp::post()
+        .and(warp::path("data"))
+        .and(warp::body::content_length_limit(1024 * 16))
+        .and(warp::body::json())
+        .map(|data: dbofdb::Data| warp::reply::json(&data));
+
+    warp::serve(insert_data).run(([127, 0, 0, 1], 3030)).await;
 }

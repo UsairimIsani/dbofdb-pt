@@ -1,6 +1,7 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 #[serde(rename_all(deserialize = "lowercase"))]
-#[derive(Debug, Deserialize, Serialize, PartialEq, PartialOrd)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, PartialOrd, JsonSchema)]
 pub enum Operation {
     Set,
     Insert,
