@@ -5,7 +5,7 @@ use warp::Filter;
 #[tokio::main]
 pub async fn main() {
     pretty_env_logger::init();
-    let conn = dbofdb::establish_connection();
+    let _conn = dbofdb::establish_connection();
     let value = json!({
     "name": "World",
     "cost": 3000,
@@ -18,6 +18,7 @@ pub async fn main() {
     let schema_from_json_value = jsonschema::JSONSchema::compile(&value).unwrap();
 
     println!("{:#?}", schema_from_json_value);
+    println!("{:#?}", schema_from_json_value.is_valid(&value));
 
     // Get the Schema for the Data. Yet to get the Schema from the json Object.
     // Only Testing

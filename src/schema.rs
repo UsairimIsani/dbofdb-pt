@@ -1,6 +1,5 @@
 table! {
-    main_table (id) {
-        id -> Int4,
+    main_table (insert_time) {
         reference_time -> Timestamptz,
         insert_time -> Timestamptz,
         data -> Jsonb,

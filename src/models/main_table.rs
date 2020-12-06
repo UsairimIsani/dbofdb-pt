@@ -1,8 +1,7 @@
 use crate::schema::main_table;
 
 use chrono::{DateTime, Utc};
-use diesel::{expression::subselect::ValidSubselect, Insertable, Queryable};
-use serde::{Deserialize, Serialize};
+use diesel::{Insertable, Queryable};
 use serde_json::value::Value;
 
 #[derive(Queryable)]
