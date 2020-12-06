@@ -22,7 +22,7 @@ use dotenv::dotenv;
 use std::env;
 pub mod prelude {
     pub use super::*;
-    // pub use Data;
+    pub use models::MainTable;
 }
 pub fn establish_connection() -> PgConnection {
     log::info!("Establlishing Connection to Timescale DB");

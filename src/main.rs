@@ -1,11 +1,11 @@
-use dbofdb;
+use dbofdb::{self, prelude::MainTable};
 use serde_json::json;
-
+use log::{trace}
 use warp::Filter;
 #[tokio::main]
 pub async fn main() {
     pretty_env_logger::init();
-    let _conn = dbofdb::establish_connection();
+    let conn = dbofdb::establish_connection();
     let value = json!({
     "name": "World",
     "cost": 3000,
@@ -23,7 +23,10 @@ pub async fn main() {
     // Get the Schema for the Data. Yet to get the Schema from the json Object.
     // Only Testing
     let schema = schemars::schema_for!(dbofdb::Data);
-    println!("{}", serde_json::to_string_pretty(&schema).unwrap());
+    
+    trace!(&serde_json::to_string_pretty(&schema).unwrap());
+
+    MainTable::query_by_interval(&conn, chrono::Utc::now(), chrono::Utc::now());
 
     // Small rest Api to test.
     let insert_data = warp::post()
