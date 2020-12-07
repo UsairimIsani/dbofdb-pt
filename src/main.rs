@@ -1,5 +1,5 @@
 use dbofdb::{self, prelude::MainTable};
-use log::trace;
+use log::{trace,debug};
 use serde_json::json;
 use warp::Filter;
 #[tokio::main]
@@ -26,7 +26,10 @@ pub async fn main() {
 
     trace!("{}", &serde_json::to_string_pretty(&schema).unwrap());
 
-    MainTable::query_by_interval(&conn, chrono::Utc::now(), chrono::Utc::now());
+    // Getting Time Ranged Data Works.
+    let r = MainTable::query_by_interval(&conn, chrono::Utc::now(), chrono::Utc::now()).unwrap(); // Probably use `thiserror` Lib for Error Handling.
+
+    debug!("Main table Return Data {:?}",r);
 
     // Small rest Api to test.
     let insert_data = warp::post()

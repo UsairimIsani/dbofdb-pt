@@ -36,14 +36,12 @@ impl MainTable {
         conn: &PgConnection,
         start: DateTime<Utc>,
         end: DateTime<Utc>,
-    ) -> anyhow::Result<usize> {
-        trace!("Get Timeranged Data : ");
+    ) -> anyhow::Result<Vec<(Value,Value)>> {
         let r = main_table::table
             .select(ALL_COLUMNS)
             .filter(main_table::insert_time.between(start, end)) // ByInterval Type Constructed Here
-            .execute(conn)?;
-        // Need to Figure out Why Get Results Does not Work
-        trace!("Get Timeranged Data : {:?}", r);
+            .load::<(Value,Value)>(conn)?;
+        trace!("Get Time ranged Data. "); 
         Ok(r)
     }
 }
@@ -80,61 +78,4 @@ impl Default for InsertIntoMainTable {
         }
     }
 }
-// use diesel::types::{Date, Text};
-// sql_function!(canon_crate_name, canon_crate_name_t, (x: Text) -> Text);
-// use diesel::pg::Pg;
-// use diesel::prelude::*;
-// use diesel::query_builder::*;
-// use diesel::query_dsl::methods::LoadQuery;
-// use diesel::sql_types::BigInt;
 
-// pub trait Intervaled: Sized {
-//     fn interval(self, start: DateTime<Utc>, end: DateTime<Utc>) -> Interval<Self>;
-// }
-
-// impl<T> Intervaled for T {
-//     fn interval(self, start: DateTime<Utc>, end: DateTime<Utc>) -> Interval<Self> {
-//         Interval {
-//             query: self,
-//             start,
-//             end,
-//         }
-//     }
-// }
-
-// #[derive(Debug, Clone, Copy, QueryId)]
-// pub struct Interval<T> {
-//     query: T,
-//     start: DateTime<Utc>,
-//     end: DateTime<Utc>,
-// }
-
-// impl<T> Interval<T> {}
-
-// // impl<T: Query> Query for Interval<T> {
-// //     type SqlType = (T::SqlType, BigInt);
-// // }
-
-// impl<T> RunQueryDsl<PgConnection> for Interval<T> {}
-
-// impl<T> QueryFragment<Pg> for Interval<T>
-// where
-//     T: QueryFragment<Pg>,
-// {
-//     //   SELECT time_bucket('15 minutes', time) AS fifteen_min,
-//     //     data,
-//     //   FROM main_table
-//     //   WHERE time > NOW() - INTERVAL '3 hours' // Map to Duration(chrono or Rust).
-//     //   GROUP BY fifteen_min, data
-//     //   ORDER BY fifteen_min DESC;
-//     fn walk_ast(&self, mut out: AstPass<Pg>) -> QueryResult<()> {
-//         out.push_sql("SELECT * FROM");
-//         self.query.walk_ast(out.reborrow())?;
-//         out.push_sql("");
-//         out.push_sql("BETWEEN");
-//         out.push_bind_param::<diesel::sql_types::Timestamptz, _>(&self.start)?;
-//         out.push_sql("AND");
-//         out.push_bind_param::<diesel::sql_types::Timestamptz, _>(&self.start)?;
-//         Ok(())
-//     }
-// }
